@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document.OutputSettings.Syntax;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -54,6 +55,8 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
         this.parent = parent;
     }
 
+
+    // CS427 Issue link: https://github.com/jhy/jsoup/issues/1341
     /**
      * Convert the unencoded (raw) key that contains unrecognized symbols to Unicode 16 following
      * HTML Living Standard https://html.spec.whatwg.org/#coercing-an-html-dom-into-an-infoset.
@@ -62,7 +65,7 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
      * @return the converted key.
      */
     public String convertSymbol(String key) {
-        String convertedKey = "";
+        StringBuffer convertedKey = new StringBuffer();
         for(int i = 0; i < key.length(); i++){
             char c = key.charAt(i);
 
@@ -77,22 +80,22 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
                 String hexString = Integer.toHexString(uni16);
 
                 // Reference: https://stackoverflow.com/questions/8689526/integer-to-two-digits-hex-in-java
-                convertedKey += "U";
+                convertedKey.append("U");
 
                 if(hexString.length() < 6){
                     for(int idx = 0; idx < (6 - hexString.length()); idx++){
-                        convertedKey += "0";
+                        convertedKey.append("0");
                     }
                 }
 
-                convertedKey += hexString.toUpperCase();
+                convertedKey.append(hexString.toUpperCase(Locale.ENGLISH));
 
             }else{
-                convertedKey += c;
+                convertedKey.append(c);
             }
         }
 
-        return convertedKey;
+        return convertedKey.toString();
     }
 
     /**
@@ -103,6 +106,7 @@ public class Attribute implements Map.Entry<String, String>, Cloneable  {
         return key;
     }
 
+    // CS427 Issue link: https://github.com/jhy/jsoup/issues/1341
     /**
      Get the attribute converted key.
      @return the attribute converted key

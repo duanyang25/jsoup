@@ -4,6 +4,7 @@ import org.jsoup.helper.Validate;
 import org.jsoup.internal.Normalizer;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -48,6 +49,7 @@ public class Tag implements Cloneable {
         return normalName;
     }
 
+    // CS427 Issue link: https://github.com/jhy/jsoup/issues/1341
     /**
      * Get this tag's name whose symbols are converted to Unicode.
      * @return the tag's converted name.
@@ -56,6 +58,7 @@ public class Tag implements Cloneable {
         return unicodeName;
     }
 
+    // CS427 Issue link: https://github.com/jhy/jsoup/issues/1341
     /**
      * Get the tag name whose symbols are converted to Unicode 16 following
      * HTML Living Standard https://html.spec.whatwg.org/#coercing-an-html-dom-into-an-infoset.
@@ -64,7 +67,7 @@ public class Tag implements Cloneable {
      * @return the tag's converted name.
      */
     public String convertSymbol(String tagName) {
-        String convertName = "";
+        StringBuffer convertName = new StringBuffer();
         for(int i = 0; i < tagName.length(); i++){
             char c = tagName.charAt(i);
 
@@ -79,22 +82,22 @@ public class Tag implements Cloneable {
                 String hexString = Integer.toHexString(uni16);
 
                 // Reference: https://stackoverflow.com/questions/8689526/integer-to-two-digits-hex-in-java
-                convertName += "U";
+                convertName.append("U");
 
                 if(hexString.length() < 6){
                     for(int idx = 0; idx < (6 - hexString.length()); idx++){
-                        convertName += "0";
+                        convertName.append("0");
                     }
                 }
 
-                convertName += hexString.toUpperCase();
+                convertName.append(hexString.toUpperCase(Locale.ENGLISH));
 
             }else{
-                convertName += c;
+                convertName.append(c);
             }
         }
 
-        return convertName;
+        return convertName.toString();
     }
 
 
